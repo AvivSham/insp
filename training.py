@@ -37,17 +37,17 @@ def train(model, train_dataloader, epochs, lr, steps_til_summary, epochs_til_che
     checkpoints_dir = os.path.join(model_dir, 'checkpoints')
     utils.cond_mkdir(checkpoints_dir)
 
-    writer = SummaryWriter(summaries_dir)
+    # writer = SummaryWriter(summaries_dir)
 
     total_steps = 0
     with tqdm(total=len(train_dataloader) * epochs) as pbar:
         train_losses = []
         for epoch in range(epochs):
-            if not epoch % epochs_til_checkpoint and epoch:
-                torch.save(model.state_dict(),
-                           os.path.join(checkpoints_dir, 'model_epoch_%04d.pth' % epoch))
-                np.savetxt(os.path.join(checkpoints_dir, 'train_losses_epoch_%04d.txt' % epoch),
-                           np.array(train_losses))
+            # if not epoch % epochs_til_checkpoint and epoch:
+            #     torch.save(model.state_dict(),
+            #                os.path.join(checkpoints_dir, 'model_epoch_%04d.pth' % epoch))
+            #     np.savetxt(os.path.join(checkpoints_dir, 'train_losses_epoch_%04d.txt' % epoch),
+            #                np.array(train_losses))
 
             for step, (model_input, gt) in enumerate(train_dataloader):
                 start_time = time.time()
@@ -79,18 +79,18 @@ def train(model, train_dataloader, epochs, lr, steps_til_summary, epochs_til_che
                     single_loss = loss.mean()
 
                     if loss_schedules is not None and loss_name in loss_schedules:
-                        writer.add_scalar(loss_name + "_weight", loss_schedules[loss_name](total_steps), total_steps)
+                        # writer.add_scalar(loss_name + "_weight", loss_schedules[loss_name](total_steps), total_steps)
                         single_loss *= loss_schedules[loss_name](total_steps)
 
-                    writer.add_scalar(loss_name, single_loss, total_steps)
+                    # writer.add_scalar(loss_name, single_loss, total_steps)
                     train_loss += single_loss
 
                 train_losses.append(train_loss.item())
-                writer.add_scalar("total_train_loss", train_loss, total_steps)
+                # writer.add_scalar("total_train_loss", train_loss, total_steps)
 
-                if not total_steps % steps_til_summary:
-                    torch.save(model.state_dict(),
-                               os.path.join(checkpoints_dir, 'model_current.pth'))
+                # if not total_steps % steps_til_summary:
+                #     torch.save(model.state_dict(),
+                #                os.path.join(checkpoints_dir, 'model_current.pth'))
                     # summary_fn(model, model_input, gt, model_output, writer, total_steps)
 
                 if not use_lbfgs:
@@ -122,15 +122,15 @@ def train(model, train_dataloader, epochs, lr, steps_til_summary, epochs_til_che
                                 val_loss = loss_fn(model_output, gt)
                                 val_losses.append(val_loss)
 
-                            writer.add_scalar("val_loss", np.mean(val_losses), total_steps)
+                            # writer.add_scalar("val_loss", np.mean(val_losses), total_steps)
                         model.train()
 
                 total_steps += 1
 
         torch.save(model.state_dict(),
                    os.path.join(checkpoints_dir, 'model_final.pth'))
-        np.savetxt(os.path.join(checkpoints_dir, 'train_losses_final.txt'),
-                   np.array(train_losses))
+        # np.savetxt(os.path.join(checkpoints_dir, 'train_losses_final.txt'),
+        #            np.array(train_losses))
 
 
 class LinearDecaySchedule():
