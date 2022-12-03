@@ -1,10 +1,10 @@
 import os, glob
 
-div2k_folder = './data/mnist/train/'
+mnist_folder = './data/mnist/train/'
 GPU_NUM = 6
 gpu_ = [0, 1, 2, 3, 6, 7]
-for cls in range(7, 10):
-    li = glob.glob(div2k_folder + f'{cls}/*.png')
+for cls in range(10):
+    li = glob.glob(mnist_folder + f'{cls}/*.png')
     li = sorted(li)
     
     for idx, cur in enumerate(li):
